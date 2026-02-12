@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Any
 from ..models.request import Request, ThreatAnalysis
 from ..services.waf_service import WAFService
 from ..services.ai_service import AIService
@@ -20,7 +20,7 @@ class WAFController:
         self.ai_service = ai_service
         self.logger = Logger().get_logger('waf_controller')
     
-    def process_request(self, request: Request) -> Dict[str, any]:
+    def process_request(self, request: Request) -> Dict[str, Any]:
         """
         Process HTTP request and perform threat analysis
         

@@ -1,5 +1,5 @@
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 from datetime import datetime
 
 
@@ -31,7 +31,7 @@ class ThreatAnalysis:
     is_threat: bool
     confidence: float
     threat_type: Optional[str] = None
-    details: Dict[str, any] = field(default_factory=dict)
+    details: Dict[str, Any] = field(default_factory=dict)
     rules_matched: List[str] = field(default_factory=list)
     
     def to_dict(self) -> dict:
