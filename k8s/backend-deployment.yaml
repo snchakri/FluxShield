@@ -1,0 +1,63 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: twilight-backend
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: twilight-backend
+  template:
+    metadata:
+      labels:
+        app: twilight-backend
+    spec:
+      containers:
+        - name: backend
+          image: twilight-backend:latest
+          ports:
+            - containerPort: 5000
+          env:
+            - name: PORT
+              value: "5000"
+            - name: AI_WAF_URL
+              value: http://twilight-ai-waf:8000
+            - name: FILE_DB_URL
+              value: http://twilight-file-db:7000
+            - name: SYNC_BASE_INTERVAL_SECONDS
+              valueFrom:
+                configMapKeyRef:
+                  name: twilight-waf-config
+                  key: SYNC_BASE_INTERVAL_SECONDS
+            - name: SYNC_JITTER_SECONDS
+              valueFrom:
+                configMapKeyRef:
+                  name: twilight-waf-config
+                  key: SYNC_JITTER_SECONDS
+            - name: SYNC_BACKOFF_MIN_SECONDS
+              valueFrom:
+                configMapKeyRef:
+                  name: twilight-waf-config
+                  key: SYNC_BACKOFF_MIN_SECONDS
+            - name: SYNC_BACKOFF_MAX_SECONDS
+              valueFrom:
+                configMapKeyRef:
+                  name: twilight-waf-config
+                  key: SYNC_BACKOFF_MAX_SECONDS
+            - name: SYNC_IDEMPOTENCY_TTL_SECONDS
+              valueFrom:
+                configMapKeyRef:
+                  name: twilight-waf-config
+                  key: SYNC_IDEMPOTENCY_TTL_SECONDS
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: twilight-backend
+spec:
+  selector:
+    app: twilight-backend
+  ports:
+    - port: 5000
+      targetPort: 5000
+      protocol: TCP

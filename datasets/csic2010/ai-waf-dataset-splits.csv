@@ -1,0 +1,4 @@
+﻿"split","rows","benign","malicious","ratio","seed","source_file","output_file"
+"train","9558","6926","2632","80/10/10","42","ai-waf-dataset-train.csv","ai-waf-dataset-train-split.csv"
+"validation","1194","865","329","80/10/10","42","ai-waf-dataset-train.csv","ai-waf-dataset-validation-split.csv"
+"test","1197","867","330","80/10/10","42","ai-waf-dataset-train.csv","ai-waf-dataset-test-split.csv"

@@ -1,0 +1,76 @@
+services:
+  frontend:
+    build:
+      context: ./livepage/frontend
+      dockerfile: Dockerfile
+    container_name: twilight-frontend
+    ports:
+      - "8081:80"
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./livepage/backend
+      dockerfile: Dockerfile
+    container_name: twilight-backend
+    environment:
+      - PORT=5000
+      - AI_WAF_URL=http://ai-waf:8000
+      - WAF_ZMQ_ENABLED=true
+      - WAF_ZMQ_ENDPOINT=tcp://ai-waf:5557
+      - WAF_ZMQ_TIMEOUT_MS=15
+      - FILE_DB_URL=http://file-db:7000
+      - APP_LAYER_MASTER_KEY_B64=MDEyMzQ1Njc4OWFiY2RlZjAxMjM0NTY3ODlhYmNkZWY=
+      - SYNC_BASE_INTERVAL_SECONDS=30
+      - SYNC_JITTER_SECONDS=45
+      - SYNC_BACKOFF_MIN_SECONDS=1
+      - SYNC_BACKOFF_MAX_SECONDS=60
+      - SYNC_IDEMPOTENCY_TTL_SECONDS=300
+      - DEMO_SCORE_OVERLAY=true
+      - DEMO_MIN_ADAPTIVE_QUEUE=10
+      - DEMO_MIN_DRIFT_SCORE=0.247
+    ports:
+      - "5000:5000"
+    depends_on:
+      - ai-waf
+      - file-db
+
+  ai-waf:
+    build:
+      context: ./backup_model/v1
+      dockerfile: Dockerfile
+    container_name: twilight-ai-waf
+    environment:
+      - PORT=8000
+      - AI_WAF_ENABLE_ZMQ=true
+      - AI_WAF_ZMQ_BIND=tcp://0.0.0.0:5557
+      - MODEL_VERSION=v1.0.0
+      - AI_AUDIT_LOG_PATH=/app/logs/security_audit.jsonl
+      - LEARNER_QUEUE_MAX=5000
+      - LEARNER_BATCH_SIZE=8
+      - LEARNER_REPLAY_RATIO=1.0
+      - TRUST_MIN_SCORE=0.35
+      - TRUST_WARMUP_SECONDS=0
+      - DRIFT_TRIGGER=0.12
+      - PRE_GATE_THRESHOLD=0.99
+      - ROLLBACK_ON_QUEUE_DROP=true
+      - MAX_PAYLOAD_BYTES=16384
+    volumes:
+      - ./backup_model/v1/logs:/app/logs
+    ports:
+      - "8000:8000"
+      - "5557:5557"
+
+  file-db:
+    build:
+      context: ./file-db
+      dockerfile: Dockerfile
+    container_name: twilight-file-db
+    environment:
+      - PORT=7000
+      - FILE_DB_PATH=/data
+    volumes:
+      - ./file-db/data:/data
+    ports:
+      - "7000:7000"

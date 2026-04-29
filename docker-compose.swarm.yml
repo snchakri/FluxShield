@@ -1,0 +1,66 @@
+version: "3.9"
+
+services:
+  backend:
+    image: twilight-backend:latest
+    environment:
+      - PORT=5000
+      - AI_WAF_URL=http://ai-waf:8000
+      - FILE_DB_URL=http://file-db:7000
+      - APP_LAYER_MASTER_KEY_B64=${APP_LAYER_MASTER_KEY_B64}
+      - SYNC_BASE_INTERVAL_SECONDS=30
+      - SYNC_JITTER_SECONDS=45
+      - SYNC_BACKOFF_MIN_SECONDS=1
+      - SYNC_BACKOFF_MAX_SECONDS=60
+      - SYNC_IDEMPOTENCY_TTL_SECONDS=300
+    ports:
+      - target: 5000
+        published: 5000
+        protocol: tcp
+        mode: ingress
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+
+  ai-waf:
+    image: twilight-ai-waf:latest
+    environment:
+      - PORT=8000
+      - MODEL_VERSION=v1.0.0
+      - AI_AUDIT_LOG_PATH=/app/logs/security_audit.jsonl
+      - LEARNER_QUEUE_MAX=5000
+      - LEARNER_BATCH_SIZE=32
+      - LEARNER_REPLAY_RATIO=1.0
+      - TRUST_MIN_SCORE=0.35
+      - TRUST_WARMUP_SECONDS=86400
+      - DRIFT_TRIGGER=0.35
+      - ROLLBACK_ON_QUEUE_DROP=true
+      - MAX_PAYLOAD_BYTES=16384
+    ports:
+      - target: 8000
+        published: 8000
+        protocol: tcp
+        mode: ingress
+    deploy:
+      replicas: 2
+      restart_policy:
+        condition: on-failure
+
+  file-db:
+    image: twilight-file-db:latest
+    environment:
+      - PORT=7000
+      - FILE_DB_PATH=/data
+    ports:
+      - target: 7000
+        published: 7000
+        protocol: tcp
+        mode: ingress
+    volumes:
+      - file_db_data:/data
+    deploy:
+      replicas: 1
+
+volumes:
+  file_db_data:

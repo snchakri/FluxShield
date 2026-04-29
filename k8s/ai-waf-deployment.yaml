@@ -1,0 +1,76 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: twilight-ai-waf
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: twilight-ai-waf
+  template:
+    metadata:
+      labels:
+        app: twilight-ai-waf
+    spec:
+      containers:
+        - name: ai-waf
+          image: twilight-ai-waf:latest
+          ports:
+            - containerPort: 8000
+          env:
+            - name: PORT
+              value: "8000"
+            - name: AI_AUDIT_LOG_PATH
+              value: /app/logs/security_audit.jsonl
+            - name: MODEL_VERSION
+              valueFrom:
+                configMapKeyRef:
+                  name: twilight-waf-config
+                  key: MODEL_VERSION
+            - name: LEARNER_QUEUE_MAX
+              valueFrom:
+                configMapKeyRef:
+                  name: twilight-waf-config
+                  key: LEARNER_QUEUE_MAX
+            - name: LEARNER_BATCH_SIZE
+              valueFrom:
+                configMapKeyRef:
+                  name: twilight-waf-config
+                  key: LEARNER_BATCH_SIZE
+            - name: LEARNER_REPLAY_RATIO
+              valueFrom:
+                configMapKeyRef:
+                  name: twilight-waf-config
+                  key: LEARNER_REPLAY_RATIO
+            - name: TRUST_MIN_SCORE
+              valueFrom:
+                configMapKeyRef:
+                  name: twilight-waf-config
+                  key: TRUST_MIN_SCORE
+            - name: TRUST_WARMUP_SECONDS
+              valueFrom:
+                configMapKeyRef:
+                  name: twilight-waf-config
+                  key: TRUST_WARMUP_SECONDS
+            - name: DRIFT_TRIGGER
+              valueFrom:
+                configMapKeyRef:
+                  name: twilight-waf-config
+                  key: DRIFT_TRIGGER
+            - name: MAX_PAYLOAD_BYTES
+              valueFrom:
+                configMapKeyRef:
+                  name: twilight-waf-config
+                  key: MAX_PAYLOAD_BYTES
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: twilight-ai-waf
+spec:
+  selector:
+    app: twilight-ai-waf
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP

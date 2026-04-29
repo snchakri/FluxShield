@@ -1,0 +1,343 @@
+{
+  "dataset_info": {
+    "name": "CSIC 2010 HTTP Dataset",
+    "total_samples": 61065,
+    "features": [
+      "Method",
+      "User-Agent",
+      "Pragma",
+      "Cache-Control",
+      "Accept",
+      "Accept-encoding",
+      "Accept-charset",
+      "language",
+      "host",
+      "cookie",
+      "content-type",
+      "connection",
+      "lenght",
+      "content",
+      "classification",
+      "URL",
+      "label",
+      "url_length",
+      "content_length"
+    ],
+    "target_variable": "label"
+  },
+  "statistical_analysis": {
+    "central_tendency": {
+      "class_distribution": {
+        "benign": 36000,
+        "malicious": 25065,
+        "ratio": 1.44
+      },
+      "url_length": {
+        "mean": 90.33,
+        "median": 59.0,
+        "mode": 57
+      },
+      "http_methods": {
+        "GET": 43088,
+        "POST": 17580,
+        "PUT": 397
+      }
+    },
+    "spread_skewness": {
+      "url_length": {
+        "std": 75.55,
+        "variance": 5707.36,
+        "range": 864,
+        "iqr": 20.0,
+        "skewness": 3.034,
+        "kurtosis": 10.925
+      },
+      "content_length": {
+        "mean": 31.94,
+        "std": 75.66,
+        "skewness": 3.028
+      }
+    },
+    "outliers": {
+      "url_length": {
+        "iqr_method": {
+          "count": 10675,
+          "percentage": 17.48,
+          "bounds": {
+            "lower": 27.0,
+            "upper": 107.0
+          }
+        },
+        "zscore_method": {
+          "count": 2357,
+          "percentage": 3.86
+        }
+      }
+    },
+    "correlations": {
+      "with_malicious": {
+        "special_char_count": 0.196,
+        "content_length": 0.184,
+        "url_length": 0.18,
+        "digit_count": 0.177
+      },
+      "method_label_chi2": {
+        "chi2": 2531.31,
+        "p_value": 0.0,
+        "significant": true
+      }
+    },
+    "distributions": {
+      "url_length": {
+        "normality_test": {
+          "shapiro_stat": 0.5301,
+          "shapiro_p": 0.0,
+          "is_normal": false
+        },
+        "ks_test_benign_vs_malicious": {
+          "ks_stat": 0.2342,
+          "p_value": 0.0,
+          "significantly_different": true
+        }
+      }
+    }
+  },
+  "quality_assessment": {
+    "missing_data": {
+      "Accept": {
+        "count": 397,
+        "percentage": 0.65
+      },
+      "content-type": {
+        "count": 43088,
+        "percentage": 70.56
+      },
+      "lenght": {
+        "count": 43088,
+        "percentage": 70.56
+      },
+      "content": {
+        "count": 43088,
+        "percentage": 70.56
+      }
+    },
+    "duplicates": {
+      "count": 0,
+      "percentage": 0.0
+    },
+    "class_imbalance": {
+      "ratio": 1.44,
+      "severity": "balanced"
+    },
+    "consistency": {
+      "empty_urls": {
+        "count": 0,
+        "percentage": 0.0
+      }
+    },
+    "bias": {
+      "method_distribution": {
+        "benign": {
+          "GET": 77.77777777777779,
+          "POST": 22.22222222222222,
+          "PUT": 0.0
+        },
+        "malicious": {
+          "GET": 60.19549172152404,
+          "POST": 38.22062637143427,
+          "PUT": 1.5838819070416916
+        }
+      },
+      "url_patterns": {
+        "benign_common": [
+          {
+            "pattern": "http:",
+            "count": 1000
+          },
+          {
+            "pattern": "localhost:8080",
+            "count": 1000
+          },
+          {
+            "pattern": "tienda1",
+            "count": 1000
+          },
+          {
+            "pattern": "publico",
+            "count": 476
+          },
+          {
+            "pattern": "imagenes",
+            "count": 246
+          }
+        ],
+        "malicious_common": [
+          {
+            "pattern": "http:",
+            "count": 1000
+          },
+          {
+            "pattern": "localhost:8080",
+            "count": 992
+          },
+          {
+            "pattern": "tienda1",
+            "count": 911
+          },
+          {
+            "pattern": "publico",
+            "count": 705
+          },
+          {
+            "pattern": "miembros",
+            "count": 146
+          }
+        ]
+      }
+    }
+  },
+  "split_recommendations": {
+    "quality_rating": {
+      "components": {
+        "completeness": 0,
+        "balance": 20,
+        "size": 20,
+        "feature_quality": 7.37,
+        "consistency": 20.0
+      },
+      "overall_score": 67.37,
+      "grade": "C (Fair)",
+      "recommendations": [
+        "Handle missing data through imputation or removal",
+        "Feature engineering needed - create more discriminative features"
+      ]
+    },
+    "splits": {
+      "80_20": {
+        "name": "80/20 (Train/Test)",
+        "train": {
+          "size": 48852,
+          "percentage": 80
+        },
+        "test": {
+          "size": 12213,
+          "percentage": 20
+        },
+        "use_case": "Simple binary classification, quick prototyping",
+        "pros": [
+          "Simple",
+          "Fast training",
+          "Good for large datasets"
+        ],
+        "cons": [
+          "No validation set",
+          "Risk of overfitting"
+        ],
+        "recommended_for": "Initial baseline models"
+      },
+      "80_10_10": {
+        "name": "80/10/10 (Train/Val/Test)",
+        "train": {
+          "size": 48852,
+          "percentage": 80
+        },
+        "validation": {
+          "size": 6106,
+          "percentage": 10
+        },
+        "test": {
+          "size": 6106,
+          "percentage": 10
+        },
+        "use_case": "Standard ML workflow with hyperparameter tuning",
+        "pros": [
+          "Separate validation",
+          "Good for model selection",
+          "Prevents overfitting"
+        ],
+        "cons": [
+          "Smaller test set"
+        ],
+        "recommended_for": "Neural networks, deep learning models"
+      },
+      "70_15_15": {
+        "name": "70/15/15 (Train/Val/Test)",
+        "train": {
+          "size": 42745,
+          "percentage": 70
+        },
+        "validation": {
+          "size": 9159,
+          "percentage": 15
+        },
+        "test": {
+          "size": 9159,
+          "percentage": 15
+        },
+        "use_case": "Production WAF with rigorous testing",
+        "pros": [
+          "Larger validation/test sets",
+          "Better generalization assessment",
+          "Robust evaluation"
+        ],
+        "cons": [
+          "Less training data"
+        ],
+        "recommended_for": "Production WAF systems, safety-critical applications \u2b50"
+      },
+      "60_20_20": {
+        "name": "60/20/20 (Train/Val/Test)",
+        "train": {
+          "size": 36639,
+          "percentage": 60
+        },
+        "validation": {
+          "size": 12213,
+          "percentage": 20
+        },
+        "test": {
+          "size": 12213,
+          "percentage": 20
+        },
+        "use_case": "Highly imbalanced or complex attack patterns",
+        "pros": [
+          "Maximum evaluation data",
+          "Best for detecting rare attacks",
+          "Robust testing"
+        ],
+        "cons": [
+          "Limited training data",
+          "May need data augmentation"
+        ],
+        "recommended_for": "Zero-day detection, adversarial robustness testing"
+      },
+      "5_fold_cv": {
+        "name": "5-Fold Cross-Validation",
+        "train": {
+          "size": 48852,
+          "percentage": 80
+        },
+        "test": {
+          "size": 12213,
+          "percentage": 20
+        },
+        "folds": 5,
+        "use_case": "Maximize data utilization, robust performance estimate",
+        "pros": [
+          "Every sample used for training and testing",
+          "Reduces variance",
+          "Best performance estimate"
+        ],
+        "cons": [
+          "Computationally expensive",
+          "5x training time"
+        ],
+        "recommended_for": "Small datasets, benchmark comparison"
+      },
+      "recommended": {
+        "split": "80_10_10",
+        "reason": "Large dataset - standard split provides sufficient samples"
+      }
+    }
+  }
+}
