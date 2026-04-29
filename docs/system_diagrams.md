@@ -7,7 +7,7 @@ Professional palette reference:
 - Amber `#F5A623` (latency/alerts)
 - Soft Neutral `#E5E9EC` / White `#FDFDFD` (text panels)
 
-All diagrams below are sized with fixed node widths, multiline labels, and grid layouts to avoid overlapping text when rendered.
+All diagrams below use quoted labels and `<br/>` line breaks so they render reliably in GitHub Markdown.
 
 ---
 
@@ -22,31 +22,31 @@ flowchart LR
   classDef control fill:#00A8B5,stroke:#0B1F2A,color:#0B1F2A,stroke-width:1.5;
 
   subgraph ClientLayer[Client & Ops Layer]
-    FE[SecOps Analyst\nReact Dashboard]
-    LT[Locust / Seed Traffic\n(load & chaos tests)]
+    FE["SecOps Analyst<br/>React Dashboard"]
+    LT["Locust / Seed Traffic<br/>(load & chaos tests)"]
   end
 
   subgraph AppLayer[Livepage Application Layer]
-    UI[Frontend (Vite + Nginx)\nPort 8081]
-    BE[Backend API\n(Node/Express)\nPort 5000]
+    UI["Frontend (Vite + Nginx)<br/>Port 8081"]
+    BE["Backend API<br/>(Node/Express)<br/>Port 5000"]
   end
 
   subgraph AILayer[AI Defense Layer]
-    PG[Pre-Gate Heuristics\n(regex + heuristics)\n<=3ms]
-    ZQ[ZeroMQ Bridge\n15ms timeout]
-    AI[AI-WAF Runtime\n(Python AutoML)\nPort 8000]
-    TE[Teacher/Student\nArbitration]
-    AL[Async Learner\n(batch 8, replay 1.0)]
+    PG["Pre-Gate Heuristics<br/>(regex + heuristics)<br/>&lt;=3ms"]
+    ZQ["ZeroMQ Bridge<br/>15ms timeout"]
+    AI["AI-WAF Runtime<br/>(Python AutoML)<br/>Port 8000"]
+    TE["Teacher/Student<br/>Arbitration"]
+    AL["Async Learner<br/>(batch 8, replay 1.0)"]
   end
 
   subgraph DataLayer[Data & Ops Layer]
-    FD[file-db Service\n(JSONL channels)\nPort 7000]
-    LG[Security & Traffic Logs\nsecurity_audit.jsonl\ntraffic_records.jsonl]
-    DS[Datasets & Checkpoints\nCSIC2010, models/, cache/]
-    KP[K8s / Compose\nscaling & health metrics]
+    FD["file-db Service<br/>(JSONL channels)<br/>Port 7000"]
+    LG["Security & Traffic Logs<br/>security_audit.jsonl<br/>traffic_records.jsonl"]
+    DS["Datasets & Checkpoints<br/>CSIC2010, models/, cache/"]
+    KP["K8s / Compose<br/>scaling & health metrics"]
   end
 
-  FE -->|HTTPS\nLive metrics| UI
+  FE -->|HTTPS<br/>Live metrics| UI
   LT -->|Encrypted test traffic| BE
   UI -->|REST / WebSocket| BE
   BE -->|Decrypt + validate| PG
@@ -57,7 +57,7 @@ flowchart LR
   TE -->|allow/block decision<br/>latency 5-10ms avg| BE
   TE -->|feedback events| FD
   TE --> AL
-  AL -->|student updates<br/>drift ≤0.12| AI
+  AL -->|student updates<br/>drift &lt;=0.12| AI
   AI -->|audit logs| FD
   FD --> LG
   BE -->|audit API| LG
@@ -92,17 +92,17 @@ flowchart TB
   classDef usecase fill:#E5E9EC,stroke:#2F3C48,color:#0B1F2A,stroke-width:1.5;
 
   subgraph Actors
-    User[End User]
-    SecOps[SecOps Analyst]
-    DevOps[DevOps Engineer]
+    User["End User"]
+    SecOps["SecOps Analyst"]
+    DevOps["DevOps Engineer"]
   end
 
   subgraph UseCases
-    UC1[Submit HTTP Request]
-    UC2[Inspect & Classify Traffic]
-    UC3[Review Live Metrics]
-    UC4[Provide Feedback / Tuning]
-    UC5[Scale & Deploy Services]
+    UC1["Submit HTTP Request"]
+    UC2["Inspect & Classify Traffic"]
+    UC3["Review Live Metrics"]
+    UC4["Provide Feedback / Tuning"]
+    UC5["Scale & Deploy Services"]
   end
 
   User --> UC1
@@ -128,14 +128,14 @@ sequenceDiagram
   participant FileDB as file-db
 
   Client->>Backend: HTTPS request (encrypted payload)
-  Backend->>Backend: Decrypt + basic validation (≤2ms)
+  Backend->>Backend: Decrypt + basic validation (<=2ms)
   Backend->>PreGate: Regex/heuristic scan
   alt Known attack
     PreGate-->>Backend: Blocked (<=3ms total)
     Backend->>FileDB: Append security audit
   else Suspicious/Unknown
     PreGate->>ZMQ: forward payload (msgpack)
-    ZMQ->>AIRuntime: classify (≤10ms)
+    ZMQ->>AIRuntime: classify (<=10ms)
     AIRuntime-->>Backend: malicious/benign + confidence
     Backend->>FileDB: persist verdict + metrics
     Backend-->>Client: allow/block response
@@ -196,14 +196,14 @@ flowchart LR
   classDef stage fill:#2F3C48,stroke:#E5E9EC,color:#FDFDFD,stroke-width:1.5;
   classDef metric fill:#F5A623,stroke:#0B1F2A,color:#0B1F2A,stroke-width:1.5;
 
-  DS[(Datasets\nCSIC2010 + huggingface)]
-  FE[Feature Extraction\nTF-IDF + stats]
-  ALBL[Attack Labeler\n18 OWASP classes]
-  AUTO[AutoML Training\nauto-sklearn / AutoKeras]
-  EVAL[Evaluation Suite\nF1, ROC, drift]
-  PKG[Model Packaging\n.joblib / SavedModel]
-  DEP[Runtime Deploy\nAI-WAF container]
-  MON[Monitoring\nmetrics_v1.json]
+  DS["Datasets<br/>CSIC2010 + huggingface"]
+  FE["Feature Extraction<br/>TF-IDF + stats"]
+  ALBL["Attack Labeler<br/>18 OWASP classes"]
+  AUTO["AutoML Training<br/>auto-sklearn / AutoKeras"]
+  EVAL["Evaluation Suite<br/>F1, ROC, drift"]
+  PKG["Model Packaging<br/>.joblib / SavedModel"]
+  DEP["Runtime Deploy<br/>AI-WAF container"]
+  MON["Monitoring<br/>metrics_v1.json"]
 
   DS --> ALBL --> FE --> AUTO --> EVAL --> PKG --> DEP --> MON
   MON -->|accuracy ≥85%?| DEP
@@ -249,15 +249,15 @@ flowchart TB
   classDef store fill:#FDFDFD,stroke:#2F3C48,color:#0B1F2A,stroke-width:1.5;
   classDef analytics fill:#00A8B5,stroke:#0B1F2A,color:#0B1F2A,stroke-width:1.5;
 
-  Ingest[Encrypted Payloads\nHTTPS/TLS + AES-GCM]
-  Decrypt[App-layer Decrypt]
-  Validate[Schema & sanity checks]
-  Classify[Pre-Gate + AI inference]
-  Decision[Allow/Block + Confidence]
-  Logs[file-db channels\nJSONL append-only]
-  Metrics[Live Metrics API\np50/p95 latency, drift]
-  LearnerBuf[Replay Buffer\n(queue depth ≤5000)]
-  Analytics[BI / SIEM / Dashboard]
+  Ingest["Encrypted Payloads<br/>HTTPS/TLS + AES-GCM"]
+  Decrypt["App-layer Decrypt"]
+  Validate["Schema & sanity checks"]
+  Classify["Pre-Gate + AI inference"]
+  Decision["Allow/Block + Confidence"]
+  Logs["file-db channels<br/>JSONL append-only"]
+  Metrics["Live Metrics API<br/>p50/p95 latency, drift"]
+  LearnerBuf["Replay Buffer<br/>(queue depth &lt;=5000)"]
+  Analytics["BI / SIEM / Dashboard"]
 
   Ingest --> Decrypt --> Validate --> Classify --> Decision
   Decision --> Logs
@@ -295,13 +295,13 @@ flowchart LR
   classDef alert fill:#F5A623,stroke:#0B1F2A,color:#0B1F2A,stroke-width:1.5;
   classDef neutral fill:#FDFDFD,stroke:#2F3C48,color:#0B1F2A,stroke-width:1.5;
 
-  Payload[Incoming Payload\nmetadata + body]
-  Scrub[PII Scrubber\nregex masks]
-  Trust[Trust Ledger\nscore ∈ [0,1]]
-  Gate[Safety Gate\nmin score 0.35]
-  Quarantine[Quarantine Lane\nreview queue]
-  Approved[Approved Feedback\nLearner queue]
-  Drop[Drop With Audit]
+  Payload["Incoming Payload<br/>metadata + body"]
+  Scrub["PII Scrubber<br/>regex masks"]
+  Trust["Trust Ledger<br/>score ∈ [0,1]"]
+  Gate["Safety Gate<br/>min score 0.35"]
+  Quarantine["Quarantine Lane<br/>review queue"]
+  Approved["Approved Feedback<br/>Learner queue"]
+  Drop["Drop With Audit"]
 
   Payload --> Scrub --> Trust --> Gate
   Gate -->|score ≥ threshold| Approved
@@ -314,15 +314,21 @@ flowchart LR
 
 ### 6.2 Trust Score Evolution (Example Source)
 ```mermaid
-timeline
-  title Source trust vs. events
-  00:00 : Score 0.20 (new source)
-  00:05 : +0.01 benign agreement
-  00:12 : +0.01 benign agreement
-  00:18 : -1.00 malicious disagreement (teacher)
-  00:18 : -> quarantined (score floored)
-  00:30 : manual review confirms malicious
-  00:30 : remains quarantined; future feedback ignored
+flowchart LR
+  classDef event fill:#2F3C48,stroke:#E5E9EC,color:#FDFDFD,stroke-width:1.5;
+  classDef quarantine fill:#F5A623,stroke:#0B1F2A,color:#0B1F2A,stroke-width:1.5;
+
+  S0["00:00<br/>Score 0.20<br/>(new source)"]
+  S1["00:05<br/>+0.01 benign agreement"]
+  S2["00:12<br/>+0.01 benign agreement"]
+  S3["00:18<br/>-1.00 malicious disagreement<br/>(teacher)"]
+  S4["00:18<br/>quarantined (score floored)"]
+  S5["00:30<br/>manual review confirms malicious"]
+  S6["00:30<br/>remains quarantined<br/>future feedback ignored"]
+
+  S0 --> S1 --> S2 --> S3 --> S4 --> S5 --> S6
+  class S0,S1,S2,S3,S5,S6 event;
+  class S4 quarantine;
 ```
 
 ---
@@ -347,7 +353,7 @@ sequenceDiagram
   NodeB->>Sync: ACK idempotency-key within TTL
   Sync-->>NodeB: recorded; schedule next interval
 
-  note over NodeA,NodeB: Control plane only; hot path never blocked
+  Note over NodeA,NodeB: Control plane only; hot path never blocked
 ```
 
 ### 7.2 Deployment Footprint
@@ -357,18 +363,18 @@ flowchart TB
   classDef node fill:#FDFDFD,stroke:#2F3C48,color:#0B1F2A,stroke-width:1.5;
 
   subgraph Cloud[K8s / Compose Cluster]
-    LB[Ingress / Load Balancer]
+    LB["Ingress / Load Balancer"]
     subgraph App
-      FEPod[Frontend Pod]
-      BEPod[Backend Pod]
+      FEPod["Frontend Pod"]
+      BEPod["Backend Pod"]
     end
     subgraph AI
-      AIPod1[AI-WAF Pod 1]
-      AIPod2[AI-WAF Pod 2]
+      AIPod1["AI-WAF Pod 1"]
+      AIPod2["AI-WAF Pod 2"]
     end
     subgraph Data
-      FileDbPod[file-db Pod]
-      Volume[Persistent Volume\n(JSONL, checkpoints)]
+      FileDbPod["file-db Pod"]
+      Volume["Persistent Volume<br/>(JSONL, checkpoints)"]
     end
   end
 
@@ -390,12 +396,12 @@ flowchart LR
   classDef enc fill:#2F3C48,stroke:#00A8B5,color:#FDFDFD,stroke-width:1.5;
   classDef key fill:#F5A623,stroke:#0B1F2A,color:#0B1F2A,stroke-width:1.5;
 
-  Client[Client Payload]
-  Cache[Data Key Cache\nTTL=120s, max uses=1000]
-  DataKey[Symmetric Data Key]
-  Cipher[AES-GCM Encrypt]
-  Envelope[Envelope Payload\n{nonce, ciphertext, aad, key_b64}]
-  Backend[Backend Decrypt]
+  Client["Client Payload"]
+  Cache["Data Key Cache<br/>TTL=120s, max uses=1000"]
+  DataKey["Symmetric Data Key"]
+  Cipher["AES-GCM Encrypt"]
+  Envelope["Envelope Payload<br/>{nonce, ciphertext, aad, key_b64}"]
+  Backend["Backend Decrypt"]
 
   Client --> Cache
   Cache -->|hit| DataKey
@@ -403,7 +409,7 @@ flowchart LR
   DataKey --> Cipher
   Cipher --> Envelope
   Envelope --> Backend
-  Backend -->|decrypt data key| PayloadOut[Plaintext Payload]
+  Backend -->|decrypt data key| PayloadOut["Plaintext Payload"]
 ```
 
 ### 8.2 Transport Fallback Logic
@@ -427,13 +433,13 @@ flowchart LR
   classDef test fill:#0B1F2A,stroke:#00A8B5,color:#FDFDFD,stroke-width:2;
   classDef stage fill:#2F3C48,stroke:#E5E9EC,color:#FDFDFD,stroke-width:1.5;
 
-  Runner[Locust Runner] --> Scenarios[Benign/Malicious Scenarios]
-  Scenarios --> Encryptor[AES-GCM Wrapper]
-  Encryptor --> Sender[HTTP POST /api/traffic/ingest]
-  Sender --> Backend
-  Backend --> MetricsAPI[/api/traffic/metrics]
-  Backend --> LiveStream[/api/traffic/live]
-  MetricsAPI --> Dashboard[Live Dashboard]
+  Runner["Locust Runner"] --> Scenarios["Benign/Malicious Scenarios"]
+  Scenarios --> Encryptor["AES-GCM Wrapper"]
+  Encryptor --> Sender["HTTP POST /api/traffic/ingest"]
+  Sender --> Backend["Backend"]
+  Backend --> MetricsAPI["/api/traffic/metrics"]
+  Backend --> LiveStream["/api/traffic/live"]
+  MetricsAPI --> Dashboard["Live Dashboard"]
   LiveStream --> Dashboard
 ```
 
@@ -444,20 +450,20 @@ flowchart TB
   classDef sink fill:#FDFDFD,stroke:#2F3C48,color:#0B1F2A,stroke-width:1.5;
 
   subgraph Runtime Metrics
-    Lat[P50/P95 Latency]
-    Drift[Drift Score]
-    Queue[Learner Queue Depth]
-    Teacher[Teacher Forced Flag]
-    Storage[File-DB Write Latency]
+    Lat["P50/P95 Latency"]
+    Drift["Drift Score"]
+    Queue["Learner Queue Depth"]
+    Teacher["Teacher Forced Flag"]
+    Storage["File-DB Write Latency"]
   end
 
-  Lat --> Prom[Prometheus / Metrics API]
+  Lat --> Prom["Prometheus / Metrics API"]
   Drift --> Prom
   Queue --> Prom
   Teacher --> Prom
   Storage --> Prom
-  Prom --> Alerts[Alertmanager / Pager]
-  Prom --> Dashboards[Grafana / Custom UI]
+  Prom --> Alerts["Alertmanager / Pager"]
+  Prom --> Dashboards["Grafana / Custom UI"]
 ```
 
 ---
@@ -474,13 +480,13 @@ flowchart LR
   classDef action fill:#2F3C48,stroke:#E5E9EC,color:#FDFDFD,stroke-width:1.5;
   classDef decision fill:#00A8B5,stroke:#0B1F2A,color:#0B1F2A,stroke-width:1.5;
 
-  Alert[Drift / Accuracy Alert]
-  Inspect[SecOps Inspect Metrics]
-  Confirm[Confirm Regression]
-  ForceTeacher[Enable Teacher-Only Mode]
-  Rollback[Rollback Student Checkpoint]
-  Validate[Re-run validation set]
-  Resume[Resume Student Learning]
+  Alert["Drift / Accuracy Alert"]
+  Inspect["SecOps Inspect Metrics"]
+  Confirm["Confirm Regression"]
+  ForceTeacher["Enable Teacher-Only Mode"]
+  Rollback["Rollback Student Checkpoint"]
+  Validate["Re-run validation set"]
+  Resume["Resume Student Learning"]
 
   Alert --> Inspect --> Confirm
   Confirm --> ForceTeacher --> Rollback --> Validate
@@ -519,14 +525,14 @@ flowchart LR
   classDef stage fill:#2F3C48,stroke:#E5E9EC,color:#FDFDFD,stroke-width:1.5;
   classDef gate fill:#F5A623,stroke:#0B1F2A,color:#0B1F2A,stroke-width:1.5;
 
-  Commit[Git Commit\n(model/config change)]
-  CI[CI Job\npytest + lint]
-  Train[Automated Training Job\nGPU runner]
-  Bench[Benchmark Stage\nlatency + accuracy gates]
-  Package[Container Build\nmodel + service]
-  Canary[Canary Deploy\n1 replica]
-  Observe[Observe metrics\n24h]
-  Rollout[Full rollout]
+  Commit["Git Commit<br/>(model/config change)"]
+  CI["CI Job<br/>pytest + lint"]
+  Train["Automated Training Job<br/>GPU runner"]
+  Bench["Benchmark Stage<br/>latency + accuracy gates"]
+  Package["Container Build<br/>model + service"]
+  Canary["Canary Deploy<br/>1 replica"]
+  Observe["Observe metrics<br/>24h"]
+  Rollout["Full rollout"]
 
   Commit --> CI --> Train --> Bench --> Package --> Canary --> Observe --> Rollout
   Bench -->|gate fail| Train
@@ -542,12 +548,12 @@ flowchart TB
   classDef store fill:#FDFDFD,stroke:#2F3C48,color:#0B1F2A,stroke-width:1.5;
   classDef process fill:#2F3C48,stroke:#E5E9EC,color:#FDFDFD,stroke-width:1.5;
 
-  Ingest[file-db\nsecurity_audit.jsonl]
-  Rotate[Rotation Policy\nsize/time triggers]
-  Archive[Archive to Object Storage]
-  Catalog[Metadata Catalog\ndataset lineage]
-  SIEM[SIEM / Data Lake]
-  Purge[Purge expired data]
+  Ingest["file-db<br/>security_audit.jsonl"]
+  Rotate["Rotation Policy<br/>size/time triggers"]
+  Archive["Archive to Object Storage"]
+  Catalog["Metadata Catalog<br/>dataset lineage"]
+  SIEM["SIEM / Data Lake"]
+  Purge["Purge expired data"]
 
   Ingest --> Rotate --> Archive --> Catalog --> SIEM
   Archive --> Purge
@@ -566,12 +572,12 @@ gantt
     Async Learning & Trust Gate :done,    des2, 2025-04, 2025-09
   section Growth
     Enterprise Control Plane    :active,  des3, 2026-01, 2026-06
-    API Discovery & Bot Mgmt    :        des4, 2026-04, 2026-12
+    API Discovery & Bot Mgmt    :         des4, 2026-04, 2026-12
   section Edge Expansion
-    Managed Cloud Service       :        des5, 2027-01, 2027-09
-    Edge Partnerships           :        des6, 2027-04, 2027-12
+    Managed Cloud Service       :         des5, 2027-01, 2027-09
+    Edge Partnerships           :         des6, 2027-04, 2027-12
 ```
 
 ---
 
-These additions round out operational, governance, and roadmap storytelling for both technical and executive audiences. Continue exporting at ≥1200 px width to keep labels readable and non-overlapping.
+These diagrams are designed for GitHub Markdown rendering and should now parse without Mermaid syntax errors.
