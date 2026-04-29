@@ -351,9 +351,7 @@ sequenceDiagram
   Sync-->>NodeB: batch payload (student checkpoint, metrics)
   NodeB->>NodeB: apply checkpoint, update learner queue
   NodeB->>Sync: ACK idempotency-key within TTL
-  Sync-->>NodeB: recorded; schedule next interval
-
-  note over NodeA,NodeB: Control plane only; hot path never blocked
+  Sync-->>NodeB: recorded and schedule next interval
 ```
 
 ### 7.2 Deployment Footprint
