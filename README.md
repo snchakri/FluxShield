@@ -1,6 +1,6 @@
 # Flux Shield — Open Source AI-Powered Web Application Firewall
 
-Flux Shield (formerly Twilight WAF / wafai-main) is an open-source, production-oriented AI-assisted web application firewall and traffic defense platform. It combines deterministic pre-gate heuristics, a high-performance ML inference runtime, and an asynchronous learning pipeline to deliver a defendable, auditable, and deployable WAF that integrates with modern cloud and container platforms.
+Flux Shield is an open-source, production-oriented AI-assisted web application firewall and traffic defense platform. It combines deterministic pre-gate heuristics, a high-performance ML inference runtime, and an asynchronous learning pipeline to deliver a defendable, auditable, and deployable WAF that integrates with modern cloud and container platforms.
 
 Flux Shield is designed for security engineers, SecOps teams, and platform operators who need strong, low-latency protections for web services while preserving a safe, reviewable feedback loop for model-driven decisions.
 
