@@ -353,7 +353,7 @@ sequenceDiagram
   NodeB->>Sync: ACK idempotency-key within TTL
   Sync-->>NodeB: recorded; schedule next interval
 
-  Note over NodeA,NodeB: Control plane only; hot path never blocked
+  note over NodeA,NodeB: Control plane only; hot path never blocked
 ```
 
 ### 7.2 Deployment Footprint
