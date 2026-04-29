@@ -1,5 +1,0 @@
-split_name,train_size,train_benign,train_malicious,test_size,test_benign,test_malicious,recommended,val_size,val_benign,val_malicious
-80_20,48852,28800,20052,12213,7200,5013,False,,,
-80_10_10,48852,28800,20052,6107,3600,2507,True,6106.0,3600.0,2506.0
-70_15_15,42745,25200,17545,9160,5400,3760,False,9160.0,5400.0,3760.0
-60_20_20,36639,21600,15039,12213,7200,5013,False,12213.0,7200.0,5013.0
