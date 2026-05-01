@@ -575,7 +575,3 @@ gantt
     Managed Cloud Service       :         des5, 2027-01, 2027-09
     Edge Partnerships           :         des6, 2027-04, 2027-12
 ```
-
----
-
-These diagrams are designed for GitHub Markdown rendering and should now parse without Mermaid syntax errors.
