@@ -1,4 +1,4 @@
-# Twilight WAF AI — Diagram Suite
+# Diagram Suite
 
 Professional palette reference:
 - Deep Navy `#0B1F2A` (frames/background accents)
