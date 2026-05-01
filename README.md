@@ -291,5 +291,3 @@ Scaling strategies:
 - Canary/promoted rollout: deploy to a small percentage of traffic and compare metrics for 24–72 hours before full promotion.
 
 ---
-
-This theoretical foundation is intentionally practical: it describes how Flux Shield trades off latency, accuracy, and safety to produce an operationally sane defense system. If you want, I can extend any subsection with formal derivations, worked numerical examples for your expected workload, or a reproducible latency benchmarking harness.
