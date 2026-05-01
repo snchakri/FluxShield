@@ -7,8 +7,6 @@ Professional palette reference:
 - Amber `#F5A623` (latency/alerts)
 - Soft Neutral `#E5E9EC` / White `#FDFDFD` (text panels)
 
-All diagrams below use quoted labels and `<br/>` line breaks so they render reliably in GitHub Markdown.
-
 ---
 
 ## 1. System Architecture (Services & Flows)
@@ -282,8 +280,6 @@ flowchart TB
 - **Latency:** strict budgets per stage with monitoring hooks; diagrams note ≤3ms pre-gate, ≤10ms inference, ≤1ms enqueue.
 - **Performance:** async learning off hot path, replay buffer to avoid catastrophic forgetting, Locust-based load tests to validate KPIs.
 
-> Render each Mermaid block to SVG/PNG with a consistent canvas size (minimum width 1200px) to preserve spacing and prevent label overlap.
-
 ---
 
 ## 6. Security & Trust Controls
@@ -463,10 +459,6 @@ flowchart TB
   Prom --> Alerts["Alertmanager / Pager"]
   Prom --> Dashboards["Grafana / Custom UI"]
 ```
-
----
-
-All additional diagrams follow the same palette and grid layout rules. Ensure exports maintain multi-line labels to prevent overlap when embedding in documentation or slide decks.
 
 ---
 
