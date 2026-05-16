@@ -16,6 +16,9 @@ from inference import InferenceEngine
 
 @dataclass
 class LearningSample:
+    """
+    Data structure for holding a training sample for online/async learning.
+    """
     payload: str
     label: int
     source_id: str
@@ -34,12 +37,18 @@ def _worker_loop(
     replay_ratio: float,
     batch_size: int,
 ) -> None:
+    """
+    Worker process loop for online batch training.
+    Pulls batches from the queue, adds optional replay samples, partial-fits the model,
+    and periodically checkpoints the updated model.
+    """
     engine = InferenceEngine(model_path=model_path, feature_extractor_path=feature_extractor_path)
     engine.load_model()
 
     while not stop_event.is_set():
         batch: List[LearningSample] = []
 
+        # Try to fetch first sample; continue if queue is empty
         try:
             first_item = training_queue.get(timeout=0.25)
             if first_item is not None:
@@ -50,6 +59,7 @@ def _worker_loop(
             status_queue.put({"type": "worker_error", "error": str(error)})
             continue
 
+        # Gather a batch of samples (up to batch_size)
         while len(batch) < batch_size:
             try:
                 item = training_queue.get_nowait()
@@ -61,15 +71,18 @@ def _worker_loop(
         if not batch:
             continue
 
+        # Prepare minibatch and labels
         payloads = [s.payload for s in batch]
         labels = [int(s.label) for s in batch]
 
+        # Add replay samples (for stability and preventing forgetting)
         anchor_count = int(len(batch) * max(replay_ratio, 0.0))
         if replay_samples and anchor_count > 0:
             replay_batch = random.sample(replay_samples, min(anchor_count, len(replay_samples)))
             payloads.extend([str(item["payload"]) for item in replay_batch])
             labels.extend([int(item["label"]) for item in replay_batch])
 
+        # Perform online training and checkpointing
         try:
             updated = engine.partial_fit_batch(
                 payloads=payloads,
@@ -78,6 +91,7 @@ def _worker_loop(
             )
 
             if updated:
+                # Save updated model to checkpoint path
                 joblib.dump(engine.model, checkpoint_path)
                 status_queue.put(
                     {
@@ -102,6 +116,10 @@ def _worker_loop(
 
 
 class AsyncLearner:
+    """
+    Asynchronous learner for online (incremental) training.
+    Handles queueing feedback samples, batching, quarantine, and batching for training.
+    """
     def __init__(
         self,
         max_queue_size: int = 5000,
@@ -117,6 +135,7 @@ class AsyncLearner:
         self.replay_samples = replay_samples or []
         self.checkpoint_path = checkpoint_path or str(Path(inference_config.MODEL_PATH).with_name("waf_model_student.pkl"))
 
+        # Setup multiprocessing context and IPC primitives
         self.ctx = get_context("spawn")
         self.training_queue: Queue = self.ctx.Queue(maxsize=max_queue_size)
         self.status_queue: Queue = self.ctx.Queue(maxsize=1000)
@@ -125,6 +144,7 @@ class AsyncLearner:
 
         self.quarantine_lane: Deque[Dict[str, object]] = deque(maxlen=quarantine_size)
 
+        # Stats for learning/feedback
         self.accepted = 0
         self.rejected = 0
         self.quarantined = 0
@@ -135,6 +155,9 @@ class AsyncLearner:
         self.last_checkpoint = None
 
     def start(self) -> None:
+        """
+        Start the training worker process if not already running.
+        """
         if self.worker is not None and self.worker.is_alive():
             return
 
@@ -157,6 +180,9 @@ class AsyncLearner:
         self.worker.start()
 
     def stop(self, timeout: float = 2.0) -> None:
+        """
+        Stop the worker process gracefully, with timeout and forced kill if necessary.
+        """
         if self.worker is None:
             return
 
@@ -167,6 +193,10 @@ class AsyncLearner:
         self.worker = None
 
     def enqueue_feedback(self, sample: Dict[str, object]) -> bool:
+        """
+        Attempt to add a sample to the update queue.
+        Returns True on accept, False if queue is full/dropped.
+        """
         try:
             self.training_queue.put_nowait(sample)
             self.accepted += 1
@@ -176,13 +206,22 @@ class AsyncLearner:
             return False
 
     def enqueue_quarantine(self, sample: Dict[str, object]) -> None:
+        """
+        Store sample in quarantine (e.g. for ambiguous, suspicious, or consensus-negative examples).
+        """
         self.quarantine_lane.append(sample)
         self.quarantined += 1
 
     def reject_feedback(self) -> None:
+        """
+        Increment rejection count; call when feedback is not accepted.
+        """
         self.rejected += 1
 
     def poll_status(self) -> None:
+        """
+        Poll for worker events (training, errors, checkpoints) and update stats.
+        """
         while True:
             try:
                 event = self.status_queue.get_nowait()
@@ -198,6 +237,9 @@ class AsyncLearner:
                 self.last_worker_error = event.get("error")
 
     def get_stats(self) -> Dict[str, object]:
+        """
+        Returns current statistics/state for metrics/monitoring.
+        """
         self.poll_status()
         queue_size = -1
         try:
