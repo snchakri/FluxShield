@@ -1,3 +1,5 @@
+"""Locust load test that generates encrypted traffic for the WAF ingest API."""
+
 import base64
 import json
 import os
@@ -51,10 +53,12 @@ COUNTRIES = ["US", "IN", "DE", "GB", "BR", "SG"]
 
 
 def b64(data: bytes) -> str:
+    """Base64-encode bytes for JSON payloads."""
     return base64.b64encode(data).decode("ascii")
 
 
 def encrypt_utf8(plaintext: str, aad: str = AAD) -> dict:
+    """Encrypt a UTF-8 payload with AES-GCM using the configured master key."""
     nonce = os.urandom(12)
     aesgcm = AESGCM(MASTER_KEY)
     ciphertext = aesgcm.encrypt(nonce, plaintext.encode("utf-8"), aad.encode("utf-8"))
@@ -67,6 +71,7 @@ def encrypt_utf8(plaintext: str, aad: str = AAD) -> dict:
 
 
 def random_ip() -> str:
+    """Generate a random IPv4 address for synthetic traffic."""
     return ".".join(
         [
             str(random.randint(1, 255)),
@@ -78,6 +83,7 @@ def random_ip() -> str:
 
 
 def build_http_request_payload() -> dict:
+    """Build a single traffic record for the ingest endpoint."""
     attack_roll = random.random()
     payload = random.choice(MALICIOUS_PAYLOADS if attack_roll < 0.65 else BENIGN_PAYLOADS)
 

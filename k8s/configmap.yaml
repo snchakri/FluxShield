@@ -1,3 +1,4 @@
+# Shared configuration values for Flux Shield Kubernetes manifests.
 apiVersion: v1
 kind: ConfigMap
 metadata:

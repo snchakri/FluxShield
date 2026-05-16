@@ -1,3 +1,4 @@
+# Local Docker Compose stack for the Flux Shield demo environment.
 services:
   frontend:
     build:

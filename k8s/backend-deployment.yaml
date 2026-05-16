@@ -1,3 +1,4 @@
+# Kubernetes deployment and service for the backend API.
 apiVersion: apps/v1
 kind: Deployment
 metadata:

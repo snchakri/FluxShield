@@ -1,3 +1,4 @@
+// Minimal append-only JSONL store for the file-db service.
 const express = require('express');
 const fs = require('fs');
 const path = require('path');
@@ -9,6 +10,7 @@ const PORT = process.env.PORT || 7000;
 const STORAGE_DIR = process.env.FILE_DB_PATH || '/data';
 fs.mkdirSync(STORAGE_DIR, { recursive: true });
 
+// Validate channel names to avoid path traversal and invalid filenames.
 function resolveChannelPath(channelName) {
   if (!/^[a-zA-Z0-9_-]+$/.test(channelName)) {
     return null;
@@ -20,6 +22,7 @@ app.get('/health', (_request, response) => {
   response.json({ status: 'ok', storageDir: STORAGE_DIR });
 });
 
+// Append a JSONL record to the selected channel.
 app.post('/append', (request, response) => {
   const { channel, record } = request.body || {};
 
@@ -41,6 +44,7 @@ app.post('/append', (request, response) => {
   return response.json({ status: 'written' });
 });
 
+// Read the latest records from a channel, capped by the requested limit.
 app.get('/records', (request, response) => {
   const channel = request.query.channel;
   const limitRaw = request.query.limit;

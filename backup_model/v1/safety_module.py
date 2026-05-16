@@ -1,3 +1,5 @@
+"""Safety gates for trust scoring, feedback acceptance, and payload scrubbing."""
+
 import re
 import time
 from dataclasses import dataclass
@@ -14,6 +16,7 @@ class TrustDecision:
 
 
 class SafetyModule:
+    """Evaluate feedback trustworthiness and decide whether to learn or quarantine."""
     def __init__(
         self,
         min_trust_to_learn: float = 0.35,
@@ -30,6 +33,7 @@ class SafetyModule:
 
         self._source_state: Dict[str, Dict[str, float]] = {}
 
+        # Patterns used to redact common secrets and PII-like tokens from payloads.
         self._pii_patterns = [
             re.compile(r"\b(?:\d[ -]*?){13,19}\b"),
             re.compile(r"(?i)\b(?:api[_-]?key|token|secret|password)\s*[:=]\s*['\"]?([A-Za-z0-9_\-\.]{8,})['\"]?"),

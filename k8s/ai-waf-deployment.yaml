@@ -1,3 +1,4 @@
+# Kubernetes deployment and service for the AI WAF runtime.
 apiVersion: apps/v1
 kind: Deployment
 metadata:

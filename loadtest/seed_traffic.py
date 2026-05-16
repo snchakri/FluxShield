@@ -1,3 +1,5 @@
+"""Seed encrypted traffic into the WAF ingest endpoint for quick validation."""
+
 import argparse
 import base64
 import json
@@ -31,10 +33,12 @@ COUNTRIES = ["US", "IN", "DE", "GB", "BR"]
 
 
 def b64(data: bytes) -> str:
+    """Base64-encode bytes for JSON payloads."""
     return base64.b64encode(data).decode("ascii")
 
 
 def random_ip() -> str:
+    """Generate a random IPv4 address for synthetic traffic."""
     return ".".join(
         [
             str(random.randint(1, 255)),
@@ -46,6 +50,7 @@ def random_ip() -> str:
 
 
 def encrypt_utf8(plaintext: str, key_b64: str, aad: str = "waf-v1") -> dict:
+    """Encrypt a UTF-8 payload with AES-GCM using the provided key."""
     key = base64.b64decode(key_b64)
     if len(key) != 32:
         raise ValueError("APP_LAYER_MASTER_KEY_B64 must decode to exactly 32 bytes")
@@ -61,6 +66,7 @@ def encrypt_utf8(plaintext: str, key_b64: str, aad: str = "waf-v1") -> dict:
 
 
 def build_payload() -> dict:
+    """Build a single synthetic payload for the ingest endpoint."""
     is_malicious = random.random() < 0.7
     raw_payload = random.choice(MALICIOUS_PAYLOADS if is_malicious else BENIGN_PAYLOADS)
     return {
@@ -74,6 +80,7 @@ def build_payload() -> dict:
 
 
 def main() -> None:
+    """Parse arguments and send encrypted requests to the ingest API."""
     parser = argparse.ArgumentParser(description="Seed encrypted traffic into WAF ingest endpoint")
     parser.add_argument("--target", default="http://localhost:5000", help="Base URL, e.g. http://localhost:5000 or https://10.0.0.10:8443")
     parser.add_argument("--count", type=int, default=200, help="Number of requests")
