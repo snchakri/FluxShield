@@ -1,3 +1,5 @@
+"""Runtime inference orchestration with teacher/student alignment and safety gates."""
+
 import time
 import os
 from dataclasses import asdict, dataclass
@@ -18,6 +20,7 @@ class RuntimeState:
 
 
 class RobustInferenceEngine:
+    """Coordinate pre-gate heuristics, model inference, and online learning signals."""
     def __init__(
         self,
         confidence_threshold: Optional[float] = None,

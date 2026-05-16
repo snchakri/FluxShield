@@ -1,3 +1,5 @@
+"""ZeroMQ IPC server for low-latency inference requests."""
+
 import os
 import signal
 import time
@@ -9,6 +11,7 @@ from robust_inference_engine import RobustInferenceEngine
 
 
 def run_ipc_server(bind_endpoint: str | None = None) -> None:
+    """Start the IPC server loop and serve classify requests until shutdown."""
     endpoint = bind_endpoint or os.environ.get("AI_WAF_ZMQ_BIND", "tcp://0.0.0.0:5557")
     max_payload_bytes = int(os.environ.get("MAX_PAYLOAD_BYTES", "16384"))
 

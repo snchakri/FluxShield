@@ -1,3 +1,4 @@
+# Training and inference dependencies for the v2 AutoKeras model.
 autokeras==1.1.0
 tensorflow==2.15.0
 pandas==2.2.2

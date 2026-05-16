@@ -1,3 +1,4 @@
+# Docker Swarm deployment definition for Flux Shield services.
 version: "3.9"
 
 services:
