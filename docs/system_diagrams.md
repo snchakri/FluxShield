@@ -548,22 +548,3 @@ flowchart TB
   Ingest --> Rotate --> Archive --> Catalog --> SIEM
   Archive --> Purge
 ```
-
----
-
-## 14. Capability Roadmap (High-Level)
-
-```mermaid
-gantt
-  title Capability Phases
-  dateFormat  YYYY-MM
-  section Foundation
-    Open-source WAF Core        :done,    des1, 2025-01, 2025-06
-    Async Learning & Trust Gate :done,    des2, 2025-04, 2025-09
-  section Growth
-    Enterprise Control Plane    :active,  des3, 2026-01, 2026-06
-    API Discovery & Bot Mgmt    :         des4, 2026-04, 2026-12
-  section Edge Expansion
-    Managed Cloud Service       :         des5, 2027-01, 2027-09
-    Edge Partnerships           :         des6, 2027-04, 2027-12
-```
